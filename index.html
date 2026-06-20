@@ -26,13 +26,14 @@
   }
   
   .schedule-container {
-    background: #272d35;
+    background: #272d35; /* Fallback background */
     padding: 30px;
     border: 1px solid #3f4753;
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    width: 710px; /* Widened to accommodate numbers inside blocks */
+    width: 710px; 
     box-sizing: border-box;
+    /* Removed background image properties from CSS, handled by JS */
   }
 
   /* Timeline Header */
@@ -47,16 +48,17 @@
   }
   .timeline-headers {
     display: flex;
-    gap: 8px; /* Aligns perfectly with the gaps between block groups */
+    gap: 8px; 
   }
   .header-segment {
-    width: 130px; /* Width of 6 blocks + 5 internal gaps */
+    width: 130px; 
     text-align: center;
     font-size: 13px;
     font-weight: 600;
-    color: #94a3b8;
+    color: #cbd5e1; /* Lightened slightly for better contrast against backgrounds */
     text-transform: uppercase;
     letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* Added shadow for readability */
   }
 
   /* Rows */
@@ -71,16 +73,17 @@
     padding-right: 15px;
     font-size: 14px;
     font-weight: 500;
-    color: #cbd5e1;
+    color: #f8fafc; /* Brightened for better contrast */
     flex-shrink: 0;
     box-sizing: border-box;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8); /* Added shadow for readability */
   }
   
   /* Blocks Track */
   .blocks {
     display: flex;
     gap: 2px;
-    background-color: #1a1e24;
+    background-color: rgba(26, 30, 36, 0.85); /* Made slightly transparent */
     padding: 4px;
     border-radius: 6px;
     border: 1px solid #333a45;
@@ -88,7 +91,7 @@
   .block {
     width: 20px;
     height: 26px;
-    background-color: #475569;
+    background-color: rgba(71, 85, 105, 0.9);
     border-radius: 3px;
     cursor: pointer;
     transition: background-color 0.1s, transform 0.05s, color 0.1s;
@@ -97,7 +100,7 @@
     justify-content: center;
     font-size: 11px;
     font-weight: bold;
-    color: #94a3b8; /* Faded number text */
+    color: #cbd5e1; 
   }
   .block:hover {
     filter: brightness(1.2);
@@ -107,7 +110,7 @@
   }
   .block.active {
     background-color: #34d399; 
-    color: #1a1e24; /* Dark number text for contrast when highlighted */
+    color: #1a1e24; 
     box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
   }
   .block.divider {
@@ -121,7 +124,7 @@
     gap: 15px;
   }
   input[type="text"], select {
-    background: #1a1e24;
+    background: rgba(26, 30, 36, 0.85); /* Made slightly transparent */
     color: #e2e8f0;
     border: 1px solid #3f4753;
     padding: 10px 12px;
@@ -197,6 +200,28 @@
 <button class="save-button" onclick="downloadImage()">Save as Image</button>
 
 <script>
+  // Apply random Animal Crossing background
+  const acnhBackgrounds = [
+    "https://acnh-imgbed.pages.dev/file/1781962413931_zzMZmoz.png",
+    "https://acnh-imgbed.pages.dev/file/1781962415916_WWNzSd9.png",
+    "https://acnh-imgbed.pages.dev/file/1781962412519_unknown.png",
+    "https://acnh-imgbed.pages.dev/file/1781962412040_RnirUs6.png",
+    "https://acnh-imgbed.pages.dev/file/1781962407032_PJWUQMb.png",
+    "https://acnh-imgbed.pages.dev/file/1781962416194_lEk2Shz.png",
+    "https://acnh-imgbed.pages.dev/file/1781962414354_D3Bi7re.png",
+    "https://acnh-imgbed.pages.dev/file/1781962414747_cHapdJD.png",
+    "https://acnh-imgbed.pages.dev/file/1781962410247_BLnD22b.png",
+    "https://acnh-imgbed.pages.dev/file/1781962413961_5FYTaD1.png"
+  ];
+  
+  const captureDiv = document.getElementById('capture');
+  const randomImage = acnhBackgrounds[Math.floor(Math.random() * acnhBackgrounds.length)];
+  
+  // The linear-gradient acts as a dark overlay so the form elements stay highly readable
+  captureDiv.style.backgroundImage = `linear-gradient(rgba(39, 45, 53, 0.8), rgba(39, 45, 53, 0.8)), url('${randomImage}')`;
+  captureDiv.style.backgroundSize = "cover";
+  captureDiv.style.backgroundPosition = "center";
+
   // State arrays for 168 hours in a week (7 days * 24 hours)
   let scheduleState = new Array(168).fill(false);
   let domBlocks = new Array(168);
@@ -220,7 +245,7 @@
       const index = (day * 24) + hour;
       const block = document.createElement('div');
       block.className = 'block';
-      block.textContent = hour; // Adds the hour number inside the pip
+      block.textContent = hour; 
       
       if (hour > 0 && hour % 6 === 0) {
         block.classList.add('divider');
@@ -285,7 +310,9 @@
   function downloadImage() {
     const element = document.getElementById("capture");
     html2canvas(element, {
-      backgroundColor: "#272d35", 
+      useCORS: true, // Enables cross-origin images to be rendered
+      allowTaint: true,
+      backgroundColor: null, // Removed the hardcoded background color to allow the image to render
       scale: 2 
     }).then(canvas => {
       const link = document.createElement("a");
