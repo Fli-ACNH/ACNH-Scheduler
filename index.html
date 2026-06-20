@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <title>Availability Form</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -35,7 +35,6 @@
     box-sizing: border-box;
   }
 
-  /* Timeline Header */
   .timeline {
     display: flex;
     align-items: center;
@@ -60,7 +59,6 @@
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8); 
   }
 
-  /* Rows */
   .row {
     display: flex;
     align-items: center;
@@ -78,7 +76,6 @@
     text-shadow: 1px 1px 3px rgba(0,0,0,0.8); 
   }
   
-  /* Blocks Track */
   .blocks {
     display: flex;
     gap: 2px;
@@ -86,6 +83,8 @@
     padding: 4px;
     border-radius: 6px;
     border: 1px solid #333a45;
+    /* Added touch-action to prevent scrolling while dragging */
+    touch-action: none; 
   }
   .block {
     width: 20px;
@@ -116,7 +115,6 @@
     margin-left: 6px; 
   }
 
-  /* Inputs */
   .input-group {
     margin-top: 25px;
     display: flex;
@@ -138,7 +136,6 @@
     border-color: #34d399;
   }
   
-  /* Buttons */
   .button-group {
     display: flex;
     gap: 15px;
@@ -169,7 +166,6 @@
     background-color: #64748b;
   }
 
-  /* --- Automatic Mobile Layout Detection --- */
   @media (max-width: 768px) {
     .schedule-container { width: 100%; padding: 20px 15px; }
     .timeline { display: none; }
@@ -181,7 +177,6 @@
     .input-group { flex-direction: column; }
   }
 
-  /* --- Manual Mobile Layout Override --- */
   body.force-mobile .schedule-container { width: 100%; padding: 20px 15px; }
   body.force-mobile .timeline { display: none; }
   body.force-mobile .row { flex-direction: column; align-items: flex-start; margin-bottom: 24px; }
@@ -265,6 +260,22 @@
 
   document.addEventListener('mousedown', () => isDragging = true);
   document.addEventListener('mouseup', () => isDragging = false);
+  
+  // Added global touch listeners for mobile drag support
+  document.addEventListener('touchend', () => isDragging = false);
+  document.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault(); 
+    const touch = e.touches[0];
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (target && target.classList.contains('block')) {
+      const index = domBlocks.indexOf(target);
+      if (index !== -1 && scheduleState[index] !== toggleState) {
+        scheduleState[index] = toggleState;
+        updateBlockVisual(index);
+      }
+    }
+  }, { passive: false });
 
   const tzOffsets = {
     "BST": 1, "GMT": 0, "EST": -5, "CST": -6, "PST": -8, "AEST": 10, "JST": 9
@@ -296,6 +307,15 @@
           updateBlockVisual(index);
         }
       });
+      
+      // Added individual touchstart for each block
+      block.addEventListener('touchstart', (e) => {
+        e.preventDefault(); 
+        isDragging = true;
+        toggleState = !scheduleState[index];
+        scheduleState[index] = toggleState;
+        updateBlockVisual(index);
+      }, { passive: false });
 
       domBlocks[index] = block;
       container.appendChild(block);
@@ -334,12 +354,23 @@
 
   function downloadImage() {
     const element = document.getElementById("capture");
+    const wasMobileForce = document.body.classList.contains('force-mobile');
+    
+    // Temporarily remove the mobile override class
+    document.body.classList.remove('force-mobile');
+
     html2canvas(element, {
       useCORS: true, 
       allowTaint: true,
       backgroundColor: null, 
-      scale: 2 
+      scale: 2,
+      // Forces the script to process the CSS as if it were on a desktop screen
+      windowWidth: 1024 
     }).then(canvas => {
+      // Return the mobile override class if it was toggled on
+      if (wasMobileForce) {
+        document.body.classList.add('force-mobile');
+      }
       const link = document.createElement("a");
       link.download = "availability-schedule.png";
       link.href = canvas.toDataURL("image/png");
@@ -347,7 +378,6 @@
     });
   }
 
-  // --- NEW: Toggle Mobile Function ---
   function toggleMobile() {
     document.body.classList.toggle('force-mobile');
   }
