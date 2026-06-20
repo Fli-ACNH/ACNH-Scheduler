@@ -296,4 +296,94 @@
       block.className = 'block';
       block.textContent = hour; 
       
-      if (hour >
+      if (hour > 0 && hour % 6 === 0) {
+        block.classList.add('divider');
+      }
+      
+      block.addEventListener('mousedown', (e) => {
+        e.preventDefault(); 
+        toggleState = !scheduleState[index];
+        scheduleState[index] = toggleState;
+        updateBlockVisual(index);
+      });
+
+      block.addEventListener('mouseenter', () => {
+        if (isDragging) {
+          scheduleState[index] = toggleState;
+          updateBlockVisual(index);
+        }
+      });
+      
+      block.addEventListener('touchstart', (e) => {
+        e.preventDefault(); 
+        isDragging = true;
+        toggleState = !scheduleState[index];
+        scheduleState[index] = toggleState;
+        updateBlockVisual(index);
+      }, { passive: false });
+
+      domBlocks[index] = block;
+      container.appendChild(block);
+    }
+  }
+
+  function updateBlockVisual(index) {
+    domBlocks[index].classList.toggle('active', scheduleState[index]);
+  }
+
+  document.getElementById('timezone').addEventListener('change', (e) => {
+    const newOffset = tzOffsets[e.target.value];
+    
+    if (currentOffset !== null) {
+      const shiftAmount = newOffset - currentOffset;
+      let newScheduleState = new Array(168).fill(false);
+      
+      for (let i = 0; i < 168; i++) {
+        if (scheduleState[i]) {
+          let newIndex = (i + shiftAmount) % 168;
+          if (newIndex < 0) {
+            newIndex += 168;
+          }
+          newScheduleState[newIndex] = true;
+        }
+      }
+      
+      scheduleState = newScheduleState;
+      for (let i = 0; i < 168; i++) {
+        updateBlockVisual(i);
+      }
+    }
+    
+    currentOffset = newOffset; 
+  });
+
+  function downloadImage() {
+    const element = document.getElementById("capture");
+    const wasMobileForce = document.body.classList.contains('force-mobile');
+    
+    document.body.classList.remove('force-mobile');
+
+    html2canvas(element, {
+      useCORS: true, 
+      allowTaint: true,
+      backgroundColor: null, 
+      scale: 2,
+      windowWidth: 1024 
+    }).then(canvas => {
+      if (wasMobileForce) {
+        document.body.classList.add('force-mobile');
+      }
+      const link = document.createElement("a");
+      link.download = "availability-schedule.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  }
+
+  function toggleMobile() {
+    document.body.classList.toggle('force-mobile');
+  }
+</script>
+
+</body>
+</html>
