@@ -7,121 +7,151 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   body {
-    background-color: #242933;
-    color: #e0e0e0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1e2329;
+    color: #e2e8f0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 40px 20px;
     margin: 0;
     gap: 20px;
+    /* Prevents text from turning blue while dragging across the schedule */
+    user-select: none; 
   }
   
-  /* Wrapper allows scrolling on smaller screens without breaking layout */
   .schedule-wrapper {
     width: 100%;
-    max-width: 520px;
+    max-width: 650px;
     overflow-x: auto; 
   }
   
   .schedule-container {
-    background: #313d4b;
+    background: #272d35;
     padding: 30px;
-    border: 2px solid #5a6b7c;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-    /* Fixed width prevents blocks from breaking out of the box */
-    width: 500px; 
+    border: 1px solid #3f4753;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    width: 600px; 
     box-sizing: border-box;
   }
-  
+
+  /* Timeline Header */
   .timeline {
     display: flex;
-    margin-left: 90px;
-    margin-bottom: 8px;
-    font-weight: bold;
-    font-size: 14px;
-    position: relative;
-    height: 20px;
-    /* Exactly matches the width of the 24 blocks */
-    width: 380px; 
+    align-items: center;
+    margin-bottom: 12px;
   }
-  
-  .time-0 { position: absolute; left: 0px; }
-  .time-12 { position: absolute; left: 192px; } /* Aligns directly over the 13th block */
-  .time-24 { position: absolute; right: 0px; }
-  
+  .timeline-spacer {
+    width: 100px; 
+    flex-shrink: 0;
+  }
+  .time-markers {
+    position: relative;
+    width: 440px; 
+    height: 20px;
+  }
+  .time-marker {
+    position: absolute;
+    font-size: 13px;
+    font-weight: 600;
+    color: #94a3b8;
+    bottom: 0;
+    transform: translateX(-50%);
+  }
+  /* Precisely spaces the time labels above the block gaps */
+  .time-marker[data-time="00:00"] { left: 0%; transform: translateX(0%);}
+  .time-marker[data-time="06:00"] { left: 25%; }
+  .time-marker[data-time="12:00"] { left: 50%; }
+  .time-marker[data-time="18:00"] { left: 75%; }
+  .time-marker[data-time="24:00"] { left: 100%; transform: translateX(-100%); }
+
+  /* Rows */
   .row {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
-  
-  .label {
-    width: 90px;
-    font-size: 15px;
-  }
-  
-  .blocks {
-    display: flex;
-    gap: 4px;
-    width: 380px;
-  }
-  
-  .block {
-    width: 12px;
-    height: 24px;
-    background-color: #4a5568;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: background-color 0.1s;
-    /* Prevents the browser from squishing the blocks on mobile */
-    flex-shrink: 0; 
-  }
-  
-  .block.active {
-    background-color: #e8a91a;
-    box-shadow: 0 0 4px #e8a91a;
-  }
-  
-  .input-group {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  input[type="text"], select {
-    background: #1e242c;
-    color: #e0e0e0;
-    border: 1px solid #5a6b7c;
-    padding: 8px 10px;
-    border-radius: 4px;
+  .day-label {
+    width: 100px;
+    text-align: right;
+    padding-right: 15px;
     font-size: 14px;
-    width: 100%;
+    font-weight: 500;
+    color: #cbd5e1;
+    flex-shrink: 0;
     box-sizing: border-box;
   }
   
+  /* Blocks Track */
+  .blocks {
+    display: flex;
+    gap: 2px;
+    background-color: #1a1e24;
+    padding: 4px;
+    border-radius: 6px;
+    border: 1px solid #333a45;
+  }
+  .block {
+    width: 16px;
+    height: 26px;
+    background-color: #475569;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.1s, transform 0.05s;
+  }
+  .block:hover {
+    filter: brightness(1.2);
+  }
+  .block:active {
+    transform: scale(0.9);
+  }
+  .block.active {
+    background-color: #34d399; /* Bright mint green for glance value */
+    box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
+  }
+  .block.divider {
+    margin-left: 6px; /* Creates the visual gap every 6 hours */
+  }
+
+  /* Inputs (Now side-by-side to save vertical space) */
+  .input-group {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+  }
+  input[type="text"], select {
+    background: #1a1e24;
+    color: #e2e8f0;
+    border: 1px solid #3f4753;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
   input[type="text"]:focus, select:focus {
     outline: none;
-    border-color: #e8a91a;
+    border-color: #34d399;
   }
   
+  /* Save Button */
   .save-button {
-    background-color: #4a5568;
+    background-color: #3b82f6;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
+    padding: 12px 24px;
+    border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
-    font-size: 14px;
-    transition: background-color 0.2s;
+    font-size: 15px;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   }
-  
   .save-button:hover {
-    background-color: #5a6b7c;
+    background-color: #2563eb;
+    transform: translateY(-1px);
   }
 </style>
 </head>
@@ -129,40 +159,25 @@
 
 <div class="schedule-wrapper">
   <div class="schedule-container" id="capture">
+    
     <div class="timeline">
-      <span class="time-0">0:00</span>
-      <span class="time-12">12:00</span>
-      <span class="time-24">24:00</span>
+      <div class="timeline-spacer"></div>
+      <div class="time-markers">
+        <span class="time-marker" data-time="00:00">00:00</span>
+        <span class="time-marker" data-time="06:00">06:00</span>
+        <span class="time-marker" data-time="12:00">12:00</span>
+        <span class="time-marker" data-time="18:00">18:00</span>
+        <span class="time-marker" data-time="24:00">24:00</span>
+      </div>
     </div>
     
-    <div class="row">
-      <div class="label">Monday</div>
-      <div class="blocks" id="mon"></div>
-    </div>
-    <div class="row">
-      <div class="label">Tuesday</div>
-      <div class="blocks" id="tue"></div>
-    </div>
-    <div class="row">
-      <div class="label">Wednesday</div>
-      <div class="blocks" id="wed"></div>
-    </div>
-    <div class="row">
-      <div class="label">Thursday</div>
-      <div class="blocks" id="thu"></div>
-    </div>
-    <div class="row">
-      <div class="label">Friday</div>
-      <div class="blocks" id="fri"></div>
-    </div>
-    <div class="row">
-      <div class="label">Saturday</div>
-      <div class="blocks" id="sat"></div>
-    </div>
-    <div class="row">
-      <div class="label">Sunday</div>
-      <div class="blocks" id="sun"></div>
-    </div>
+    <div class="row"><div class="day-label">Monday</div><div class="blocks" id="mon"></div></div>
+    <div class="row"><div class="day-label">Tuesday</div><div class="blocks" id="tue"></div></div>
+    <div class="row"><div class="day-label">Wednesday</div><div class="blocks" id="wed"></div></div>
+    <div class="row"><div class="day-label">Thursday</div><div class="blocks" id="thu"></div></div>
+    <div class="row"><div class="day-label">Friday</div><div class="blocks" id="fri"></div></div>
+    <div class="row"><div class="day-label">Saturday</div><div class="blocks" id="sat"></div></div>
+    <div class="row"><div class="day-label">Sunday</div><div class="blocks" id="sun"></div></div>
 
     <div class="input-group">
       <select id="timezone">
@@ -183,28 +198,49 @@
 <button class="save-button" onclick="downloadImage()">Save as Image</button>
 
 <script>
+  let isDragging = false;
+  let toggleState = false;
+
+  // Track global mouse state for drag-to-select functionality
+  document.addEventListener('mousedown', () => isDragging = true);
+  document.addEventListener('mouseup', () => isDragging = false);
+
   function createBlocks(containerId) {
     const container = document.getElementById(containerId);
     for (let i = 0; i < 24; i++) {
       const block = document.createElement('div');
       block.className = 'block';
       
-      block.addEventListener('click', () => {
-        block.classList.toggle('active');
+      // Add a gap every 6 hours for visual reference
+      if (i > 0 && i % 6 === 0) {
+        block.classList.add('divider');
+      }
+      
+      // Handle click to toggle
+      block.addEventListener('mousedown', (e) => {
+        e.preventDefault(); 
+        toggleState = !block.classList.contains('active');
+        block.classList.toggle('active', toggleState);
       });
+
+      // Handle drag to toggle multiple blocks seamlessly
+      block.addEventListener('mouseenter', () => {
+        if (isDragging) {
+          block.classList.toggle('active', toggleState);
+        }
+      });
+
       container.appendChild(block);
     }
   }
   
-  // Creates blocks for each day of the week
   const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
   days.forEach(day => createBlocks(day));
 
   function downloadImage() {
     const element = document.getElementById("capture");
-    
     html2canvas(element, {
-      backgroundColor: "#313d4b", 
+      backgroundColor: "#272d35", 
       scale: 2 
     }).then(canvas => {
       const link = document.createElement("a");
