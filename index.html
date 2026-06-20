@@ -16,13 +16,12 @@
     padding: 40px 20px;
     margin: 0;
     gap: 20px;
-    /* Prevents text from turning blue while dragging across the schedule */
     user-select: none; 
   }
   
   .schedule-wrapper {
     width: 100%;
-    max-width: 650px;
+    max-width: 750px;
     overflow-x: auto; 
   }
   
@@ -32,7 +31,7 @@
     border: 1px solid #3f4753;
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    width: 600px; 
+    width: 710px; /* Widened to accommodate numbers inside blocks */
     box-sizing: border-box;
   }
 
@@ -46,25 +45,19 @@
     width: 100px; 
     flex-shrink: 0;
   }
-  .time-markers {
-    position: relative;
-    width: 440px; 
-    height: 20px;
+  .timeline-headers {
+    display: flex;
+    gap: 8px; /* Aligns perfectly with the gaps between block groups */
   }
-  .time-marker {
-    position: absolute;
+  .header-segment {
+    width: 130px; /* Width of 6 blocks + 5 internal gaps */
+    text-align: center;
     font-size: 13px;
     font-weight: 600;
     color: #94a3b8;
-    bottom: 0;
-    transform: translateX(-50%);
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
-  /* Precisely spaces the time labels above the block gaps */
-  .time-marker[data-time="00:00"] { left: 0%; transform: translateX(0%);}
-  .time-marker[data-time="06:00"] { left: 25%; }
-  .time-marker[data-time="12:00"] { left: 50%; }
-  .time-marker[data-time="18:00"] { left: 75%; }
-  .time-marker[data-time="24:00"] { left: 100%; transform: translateX(-100%); }
 
   /* Rows */
   .row {
@@ -93,12 +86,18 @@
     border: 1px solid #333a45;
   }
   .block {
-    width: 16px;
+    width: 20px;
     height: 26px;
     background-color: #475569;
     border-radius: 3px;
     cursor: pointer;
-    transition: background-color 0.1s, transform 0.05s;
+    transition: background-color 0.1s, transform 0.05s, color 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: #94a3b8; /* Faded number text */
   }
   .block:hover {
     filter: brightness(1.2);
@@ -107,14 +106,15 @@
     transform: scale(0.9);
   }
   .block.active {
-    background-color: #34d399; /* Bright mint green for glance value */
+    background-color: #34d399; 
+    color: #1a1e24; /* Dark number text for contrast when highlighted */
     box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
   }
   .block.divider {
-    margin-left: 6px; /* Creates the visual gap every 6 hours */
+    margin-left: 6px; 
   }
 
-  /* Inputs (Now side-by-side to save vertical space) */
+  /* Inputs */
   .input-group {
     margin-top: 25px;
     display: flex;
@@ -162,26 +162,25 @@
     
     <div class="timeline">
       <div class="timeline-spacer"></div>
-      <div class="time-markers">
-        <span class="time-marker" data-time="00:00">00:00</span>
-        <span class="time-marker" data-time="06:00">06:00</span>
-        <span class="time-marker" data-time="12:00">12:00</span>
-        <span class="time-marker" data-time="18:00">18:00</span>
-        <span class="time-marker" data-time="24:00">24:00</span>
+      <div class="timeline-headers">
+        <div class="header-segment">Night</div>
+        <div class="header-segment">Morning</div>
+        <div class="header-segment">Afternoon</div>
+        <div class="header-segment">Evening</div>
       </div>
     </div>
     
-    <div class="row"><div class="day-label">Monday</div><div class="blocks" id="mon"></div></div>
-    <div class="row"><div class="day-label">Tuesday</div><div class="blocks" id="tue"></div></div>
-    <div class="row"><div class="day-label">Wednesday</div><div class="blocks" id="wed"></div></div>
-    <div class="row"><div class="day-label">Thursday</div><div class="blocks" id="thu"></div></div>
-    <div class="row"><div class="day-label">Friday</div><div class="blocks" id="fri"></div></div>
-    <div class="row"><div class="day-label">Saturday</div><div class="blocks" id="sat"></div></div>
-    <div class="row"><div class="day-label">Sunday</div><div class="blocks" id="sun"></div></div>
+    <div class="row"><div class="day-label">Monday</div><div class="blocks" id="day-0"></div></div>
+    <div class="row"><div class="day-label">Tuesday</div><div class="blocks" id="day-1"></div></div>
+    <div class="row"><div class="day-label">Wednesday</div><div class="blocks" id="day-2"></div></div>
+    <div class="row"><div class="day-label">Thursday</div><div class="blocks" id="day-3"></div></div>
+    <div class="row"><div class="day-label">Friday</div><div class="blocks" id="day-4"></div></div>
+    <div class="row"><div class="day-label">Saturday</div><div class="blocks" id="day-5"></div></div>
+    <div class="row"><div class="day-label">Sunday</div><div class="blocks" id="day-6"></div></div>
 
     <div class="input-group">
       <select id="timezone">
-        <option value="" disabled selected>Select Timezone...</option>
+        <option value="" disabled selected>Select Your Timezone...</option>
         <option value="BST">British Summer Time (BST)</option>
         <option value="GMT">Greenwich Mean Time (GMT)</option>
         <option value="EST">Eastern Standard Time (EST)</option>
@@ -198,45 +197,91 @@
 <button class="save-button" onclick="downloadImage()">Save as Image</button>
 
 <script>
+  // State arrays for 168 hours in a week (7 days * 24 hours)
+  let scheduleState = new Array(168).fill(false);
+  let domBlocks = new Array(168);
+  
   let isDragging = false;
   let toggleState = false;
 
-  // Track global mouse state for drag-to-select functionality
   document.addEventListener('mousedown', () => isDragging = true);
   document.addEventListener('mouseup', () => isDragging = false);
 
-  function createBlocks(containerId) {
-    const container = document.getElementById(containerId);
-    for (let i = 0; i < 24; i++) {
+  // Timezone Offset Values (relative to GMT)
+  const tzOffsets = {
+    "BST": 1, "GMT": 0, "EST": -5, "CST": -6, "PST": -8, "AEST": 10, "JST": 9
+  };
+  let currentOffset = null;
+
+  // Generate the Grid
+  for (let day = 0; day < 7; day++) {
+    const container = document.getElementById('day-' + day);
+    for (let hour = 0; hour < 24; hour++) {
+      const index = (day * 24) + hour;
       const block = document.createElement('div');
       block.className = 'block';
+      block.textContent = hour; // Adds the hour number inside the pip
       
-      // Add a gap every 6 hours for visual reference
-      if (i > 0 && i % 6 === 0) {
+      if (hour > 0 && hour % 6 === 0) {
         block.classList.add('divider');
       }
       
-      // Handle click to toggle
+      // Paint logic
       block.addEventListener('mousedown', (e) => {
         e.preventDefault(); 
-        toggleState = !block.classList.contains('active');
-        block.classList.toggle('active', toggleState);
+        toggleState = !scheduleState[index];
+        scheduleState[index] = toggleState;
+        updateBlockVisual(index);
       });
 
-      // Handle drag to toggle multiple blocks seamlessly
       block.addEventListener('mouseenter', () => {
         if (isDragging) {
-          block.classList.toggle('active', toggleState);
+          scheduleState[index] = toggleState;
+          updateBlockVisual(index);
         }
       });
 
+      domBlocks[index] = block;
       container.appendChild(block);
     }
   }
-  
-  const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-  days.forEach(day => createBlocks(day));
 
+  // Update visual state of a specific block
+  function updateBlockVisual(index) {
+    domBlocks[index].classList.toggle('active', scheduleState[index]);
+  }
+
+  // Handle Timezone Shifts
+  document.getElementById('timezone').addEventListener('change', (e) => {
+    const newOffset = tzOffsets[e.target.value];
+    
+    // If a timezone was already selected, shift the blocks by the difference
+    if (currentOffset !== null) {
+      const shiftAmount = newOffset - currentOffset;
+      let newScheduleState = new Array(168).fill(false);
+      
+      for (let i = 0; i < 168; i++) {
+        if (scheduleState[i]) {
+          // Calculate new position, handling wrap-arounds
+          let newIndex = (i + shiftAmount) % 168;
+          if (newIndex < 0) {
+            newIndex += 168;
+          }
+          newScheduleState[newIndex] = true;
+        }
+      }
+      
+      scheduleState = newScheduleState;
+      // Re-render all blocks with shifted data
+      for (let i = 0; i < 168; i++) {
+        updateBlockVisual(i);
+      }
+    }
+    
+    currentOffset = newOffset; // Lock in the new baseline
+  });
+
+  // Download functionality
   function downloadImage() {
     const element = document.getElementById("capture");
     html2canvas(element, {
