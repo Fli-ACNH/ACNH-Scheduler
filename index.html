@@ -6,14 +6,8 @@
 <title>Availability Form</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  /* NEW: Strict box-sizing and overflow prevention to stop mobile wiggling */
-  * {
-    box-sizing: border-box;
-  }
-  html, body {
-    max-width: 100vw;
-    overflow-x: hidden;
-  }
+  * { box-sizing: border-box; }
+  html, body { max-width: 100vw; overflow-x: hidden; }
   
   body {
     background-color: #1e2329;
@@ -28,11 +22,7 @@
     user-select: none; 
   }
   
-  .schedule-wrapper {
-    width: 100%;
-    max-width: 750px;
-    overflow-x: auto; 
-  }
+  .schedule-wrapper { width: 100%; max-width: 750px; overflow-x: auto; }
   
   .schedule-container {
     background: #272d35; 
@@ -43,138 +33,62 @@
     width: 710px; 
   }
 
-  .timeline {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  .timeline-spacer {
-    width: 100px; 
-    flex-shrink: 0;
-  }
-  .timeline-headers {
-    display: flex;
-    gap: 8px; 
-  }
+  .timeline { display: flex; align-items: center; margin-bottom: 12px; }
+  .timeline-spacer { width: 100px; flex-shrink: 0; }
+  .timeline-headers { display: flex; gap: 8px; }
   .header-segment {
-    width: 130px; 
-    text-align: center;
-    font-size: 13px;
-    font-weight: 600;
-    color: #cbd5e1; 
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    width: 130px; text-align: center; font-size: 13px; font-weight: 600;
+    color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8); 
   }
 
-  .row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-  }
+  .row { display: flex; align-items: center; margin-bottom: 8px; }
   .day-label {
-    width: 100px;
-    text-align: right;
-    padding-right: 15px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #f8fafc; 
-    flex-shrink: 0;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.8); 
+    width: 100px; text-align: right; padding-right: 15px; font-size: 14px;
+    font-weight: 500; color: #f8fafc; flex-shrink: 0; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); 
   }
   
   .blocks {
-    display: flex;
-    gap: 2px;
-    background-color: rgba(26, 30, 36, 0.85); 
-    padding: 4px;
-    border-radius: 6px;
-    border: 1px solid #333a45;
-    touch-action: none; 
+    display: flex; gap: 2px; background-color: rgba(26, 30, 36, 0.85); 
+    padding: 4px; border-radius: 6px; border: 1px solid #333a45; touch-action: none; 
   }
   .block {
-    width: 20px;
-    height: 26px;
-    background-color: rgba(71, 85, 105, 0.9);
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.1s, transform 0.05s, color 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: bold;
-    color: #cbd5e1; 
+    width: 20px; height: 26px; background-color: rgba(71, 85, 105, 0.9);
+    border-radius: 3px; cursor: pointer; transition: background-color 0.1s, transform 0.05s, color 0.1s;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: bold; color: #cbd5e1; 
   }
-  .block:hover {
-    filter: brightness(1.2);
-  }
-  .block:active {
-    transform: scale(0.9);
-  }
+  .block:hover { filter: brightness(1.2); }
+  .block:active { transform: scale(0.9); }
   .block.active {
-    background-color: #34d399; 
-    color: #1a1e24; 
-    box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
+    background-color: #34d399; color: #1a1e24; box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
   }
-  .block.divider {
-    margin-left: 6px; 
-  }
+  .block.divider { margin-left: 6px; }
 
-  .input-group {
-    margin-top: 25px;
-    display: flex;
-    gap: 15px;
-  }
+  .input-group { margin-top: 25px; display: flex; gap: 15px; }
   input[type="text"], select {
-    background: rgba(26, 30, 36, 0.85); 
-    color: #e2e8f0;
-    border: 1px solid #3f4753;
-    padding: 10px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    width: 100%;
-    font-family: inherit;
+    background: rgba(26, 30, 36, 0.85); color: #e2e8f0; border: 1px solid #3f4753;
+    padding: 10px 12px; border-radius: 6px; font-size: 14px; width: 100%; font-family: inherit;
   }
-  input[type="text"]:focus, select:focus {
-    outline: none;
-    border-color: #34d399;
-  }
+  input[type="text"]:focus, select:focus { outline: none; border-color: #34d399; }
   
-  .button-group {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    justify-content: center;
+  .button-group { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+  .btn {
+    color: white; border: none; padding: 12px 24px; border-radius: 6px;
+    cursor: pointer; font-weight: bold; font-size: 15px; transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0, 0.3);
   }
-  .save-button {
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 15px;
-    transition: background-color 0.2s, transform 0.1s;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  }
-  .save-button:hover {
-    background-color: #2563eb;
-    transform: translateY(-1px);
-  }
-  .toggle-button {
-    background-color: #475569;
-    box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3);
-  }
-  .toggle-button:hover {
-    background-color: #64748b;
-  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-save { background-color: #3b82f6; }
+  .btn-save:hover { background-color: #2563eb; }
+  .btn-toggle { background-color: #475569; }
+  .btn-toggle:hover { background-color: #64748b; }
+  .btn-share { background-color: #10b981; }
+  .btn-share:hover { background-color: #059669; }
 
   @media (max-width: 768px) {
     .schedule-container { width: 100%; padding: 20px 15px; }
     .timeline { display: none; }
-    /* UPDATED: Increased margin-bottom to 40px to create a large touch-safe scrolling zone */
     .row { flex-direction: column; align-items: flex-start; margin-bottom: 40px; }
     .day-label { width: 100%; text-align: left; padding-right: 0; margin-bottom: 8px; font-size: 18px; }
     .blocks { flex-wrap: wrap; width: 100%; gap: 4px 2px; }
@@ -185,7 +99,6 @@
 
   body.force-mobile .schedule-container { width: 100%; padding: 20px 15px; }
   body.force-mobile .timeline { display: none; }
-  /* UPDATED: Increased margin-bottom to 40px here as well */
   body.force-mobile .row { flex-direction: column; align-items: flex-start; margin-bottom: 40px; }
   body.force-mobile .day-label { width: 100%; text-align: left; padding-right: 0; margin-bottom: 8px; font-size: 18px; }
   body.force-mobile .blocks { flex-wrap: wrap; width: 100%; gap: 4px 2px; }
@@ -234,8 +147,9 @@
 </div>
 
 <div class="button-group">
-  <button class="save-button toggle-button" onclick="toggleMobile()">Toggle Mobile Layout</button>
-  <button class="save-button" onclick="downloadImage()">Save as Image</button>
+  <button class="btn btn-toggle" onclick="toggleMobile()">Toggle Mobile Layout</button>
+  <button class="btn btn-save" onclick="downloadImage()">Save as Image</button>
+  <button class="btn btn-share" id="shareBtn" onclick="generateShareLink()">Copy Share Link</button>
 </div>
 
 <script>
@@ -383,6 +297,67 @@
   function toggleMobile() {
     document.body.classList.toggle('force-mobile');
   }
+
+  function compressSchedule() {
+    let hex = '';
+    for(let i=0; i<168; i+=4) {
+      let val = (scheduleState[i] ? 8 : 0) + (scheduleState[i+1] ? 4 : 0) + (scheduleState[i+2] ? 2 : 0) + (scheduleState[i+3] ? 1 : 0);
+      hex += val.toString(16);
+    }
+    return hex;
+  }
+
+  function decompressSchedule(hexStr) {
+    if (!hexStr || hexStr.length !== 42) return;
+    for(let i=0; i<hexStr.length; i++) {
+      let val = parseInt(hexStr[i], 16);
+      scheduleState[i*4] = !!(val & 8);
+      scheduleState[i*4+1] = !!(val & 4);
+      scheduleState[i*4+2] = !!(val & 2);
+      scheduleState[i*4+3] = !!(val & 1);
+    }
+    for (let i=0; i<168; i++) {
+      updateBlockVisual(i);
+    }
+  }
+
+  function generateShareLink() {
+    const username = document.getElementById('discord').value.trim();
+    const tz = document.getElementById('timezone').value;
+    const scheduleHex = compressSchedule();
+    
+    let url = new URL(window.location.href);
+    url.searchParams.set('s', scheduleHex);
+    if (username) url.searchParams.set('user', username);
+    if (tz) url.searchParams.set('tz', tz);
+    
+    const linkText = username ? `${username}'s Schedule` : `My Schedule`;
+    const markdownLink = `[${linkText}](${url.toString()})`;
+    
+    navigator.clipboard.writeText(markdownLink).then(() => {
+      const btn = document.getElementById('shareBtn');
+      btn.textContent = "Copied Markdown!";
+      setTimeout(() => btn.textContent = "Copy Share Link", 2000);
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    
+    if (params.has('s')) {
+      decompressSchedule(params.get('s'));
+    }
+    if (params.has('user')) {
+      document.getElementById('discord').value = params.get('user');
+    }
+    if (params.has('tz')) {
+      const tzVal = params.get('tz');
+      const tzSelect = document.getElementById('timezone');
+      tzSelect.value = tzVal;
+      currentOffset = tzOffsets[tzVal]; 
+    }
+  });
+
 </script>
 
 </body>
