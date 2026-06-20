@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Availability Form</title>
-<!-- Include html2canvas for capturing the div as an image -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   body {
@@ -12,22 +11,31 @@
     color: #e0e0e0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
-    flex-direction: column; /* Added to stack the container and the save button */
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
+    padding: 40px 20px;
     margin: 0;
-    gap: 20px; /* Added spacing between form and button */
+    gap: 20px;
   }
+  
+  /* Wrapper allows scrolling on smaller screens without breaking layout */
+  .schedule-wrapper {
+    width: 100%;
+    max-width: 520px;
+    overflow-x: auto; 
+  }
+  
   .schedule-container {
     background: #313d4b;
     padding: 30px;
     border: 2px solid #5a6b7c;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-    /* Set a fixed width to ensure the downloaded image is consistently sized */
-    width: 380px; 
+    /* Fixed width prevents blocks from breaking out of the box */
+    width: 500px; 
+    box-sizing: border-box;
   }
+  
   .timeline {
     display: flex;
     margin-left: 90px;
@@ -36,22 +44,31 @@
     font-size: 14px;
     position: relative;
     height: 20px;
+    /* Exactly matches the width of the 24 blocks */
+    width: 380px; 
   }
+  
   .time-0 { position: absolute; left: 0px; }
-  .time-12 { position: absolute; left: 192px; } /* Aligns with the 12th block */
+  .time-12 { position: absolute; left: 192px; } /* Aligns directly over the 13th block */
+  .time-24 { position: absolute; right: 0px; }
+  
   .row {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
+  
   .label {
     width: 90px;
     font-size: 15px;
   }
+  
   .blocks {
     display: flex;
     gap: 4px;
+    width: 380px;
   }
+  
   .block {
     width: 12px;
     height: 24px;
@@ -59,18 +76,22 @@
     border-radius: 2px;
     cursor: pointer;
     transition: background-color 0.1s;
+    /* Prevents the browser from squishing the blocks on mobile */
+    flex-shrink: 0; 
   }
+  
   .block.active {
     background-color: #e8a91a;
     box-shadow: 0 0 4px #e8a91a;
   }
-  /* New styles for the inputs and button */
+  
   .input-group {
     margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
+  
   input[type="text"], select {
     background: #1e242c;
     color: #e0e0e0;
@@ -81,10 +102,12 @@
     width: 100%;
     box-sizing: border-box;
   }
+  
   input[type="text"]:focus, select:focus {
     outline: none;
     border-color: #e8a91a;
   }
+  
   .save-button {
     background-color: #4a5568;
     color: white;
@@ -96,6 +119,7 @@
     font-size: 14px;
     transition: background-color 0.2s;
   }
+  
   .save-button:hover {
     background-color: #5a6b7c;
   }
@@ -103,51 +127,68 @@
 </head>
 <body>
 
-<!-- Added id="capture" so the script knows what area to screenshot -->
-<div class="schedule-container" id="capture">
-  <div class="timeline">
-    <span class="time-0">0:00</span>
-    <span class="time-12">12:00</span>
-  </div>
-  
-  <div class="row">
-    <div class="label">Weekdays</div>
-    <div class="blocks" id="weekdays"></div>
-  </div>
+<div class="schedule-wrapper">
+  <div class="schedule-container" id="capture">
+    <div class="timeline">
+      <span class="time-0">0:00</span>
+      <span class="time-12">12:00</span>
+      <span class="time-24">24:00</span>
+    </div>
+    
+    <div class="row">
+      <div class="label">Monday</div>
+      <div class="blocks" id="mon"></div>
+    </div>
+    <div class="row">
+      <div class="label">Tuesday</div>
+      <div class="blocks" id="tue"></div>
+    </div>
+    <div class="row">
+      <div class="label">Wednesday</div>
+      <div class="blocks" id="wed"></div>
+    </div>
+    <div class="row">
+      <div class="label">Thursday</div>
+      <div class="blocks" id="thu"></div>
+    </div>
+    <div class="row">
+      <div class="label">Friday</div>
+      <div class="blocks" id="fri"></div>
+    </div>
+    <div class="row">
+      <div class="label">Saturday</div>
+      <div class="blocks" id="sat"></div>
+    </div>
+    <div class="row">
+      <div class="label">Sunday</div>
+      <div class="blocks" id="sun"></div>
+    </div>
 
-  <div class="row">
-    <div class="label">Weekends</div>
-    <div class="blocks" id="weekends"></div>
-  </div>
-
-  <!-- New Input Fields -->
-  <div class="input-group">
-    <select id="timezone">
-      <option value="" disabled selected>Select Timezone...</option>
-      <option value="BST">British Summer Time (BST)</option>
-      <option value="GMT">Greenwich Mean Time (GMT)</option>
-      <option value="EST">Eastern Standard Time (EST)</option>
-      <option value="CST">Central Standard Time (CST)</option>
-      <option value="PST">Pacific Standard Time (PST)</option>
-      <option value="AEST">Australian Eastern Standard Time (AEST)</option>
-      <option value="JST">Japan Standard Time (JST)</option>
-    </select>
-    <input type="text" id="discord" placeholder="Discord: @username" autocomplete="off" />
+    <div class="input-group">
+      <select id="timezone">
+        <option value="" disabled selected>Select Timezone...</option>
+        <option value="BST">British Summer Time (BST)</option>
+        <option value="GMT">Greenwich Mean Time (GMT)</option>
+        <option value="EST">Eastern Standard Time (EST)</option>
+        <option value="CST">Central Standard Time (CST)</option>
+        <option value="PST">Pacific Standard Time (PST)</option>
+        <option value="AEST">Australian Eastern Standard Time (AEST)</option>
+        <option value="JST">Japan Standard Time (JST)</option>
+      </select>
+      <input type="text" id="discord" placeholder="Discord: @username" autocomplete="off" />
+    </div>
   </div>
 </div>
 
-<!-- New Save Button -->
 <button class="save-button" onclick="downloadImage()">Save as Image</button>
 
 <script>
-  // Generates 24 clickable blocks for a given row
   function createBlocks(containerId) {
     const container = document.getElementById(containerId);
     for (let i = 0; i < 24; i++) {
       const block = document.createElement('div');
       block.className = 'block';
       
-      // Toggle the yellow active state when clicked
       block.addEventListener('click', () => {
         block.classList.toggle('active');
       });
@@ -155,17 +196,16 @@
     }
   }
   
-  createBlocks('weekdays');
-  createBlocks('weekends');
+  // Creates blocks for each day of the week
+  const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+  days.forEach(day => createBlocks(day));
 
-  // New function to capture and download the image
   function downloadImage() {
     const element = document.getElementById("capture");
     
-    // Use html2canvas to render the element as an image
     html2canvas(element, {
-      backgroundColor: "#313d4b", // Matches the container background to avoid white borders
-      scale: 2 // Increases the resolution of the downloaded image
+      backgroundColor: "#313d4b", 
+      scale: 2 
     }).then(canvas => {
       const link = document.createElement("a");
       link.download = "availability-schedule.png";
