@@ -138,7 +138,13 @@
     border-color: #34d399;
   }
   
-  /* Save Button */
+  /* Buttons */
+  .button-group {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
   .save-button {
     background-color: #3b82f6;
     color: white;
@@ -155,46 +161,35 @@
     background-color: #2563eb;
     transform: translateY(-1px);
   }
-
-  /* --- NEW: Automatic Mobile Layout Detection --- */
-  @media (max-width: 768px) {
-    .schedule-container {
-      width: 100%;
-      padding: 20px 15px;
-    }
-    .timeline {
-      display: none; /* Hides the headers, users will rely on the block numbers */
-    }
-    .row {
-      flex-direction: column;
-      align-items: flex-start;
-      margin-bottom: 24px; /* Extra space between days */
-    }
-    .day-label {
-      width: 100%;
-      text-align: left;
-      padding-right: 0;
-      margin-bottom: 8px;
-      font-size: 18px; /* Larger day labels for readability */
-    }
-    .blocks {
-      flex-wrap: wrap; /* Allows the blocks to stack */
-      width: 100%;
-      box-sizing: border-box;
-      gap: 4px 2px; /* Slight vertical gap when wrapped */
-    }
-    .block {
-      width: calc((100% - 10px) / 6); /* Forces exactly 6 blocks per row */
-      height: 44px; /* Apple's recommended minimum touch target size */
-      font-size: 14px;
-    }
-    .block.divider {
-      margin-left: 0; /* Removes the desktop spacer gap */
-    }
-    .input-group {
-      flex-direction: column; /* Stacks the dropdown and text box */
-    }
+  .toggle-button {
+    background-color: #475569;
+    box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3);
   }
+  .toggle-button:hover {
+    background-color: #64748b;
+  }
+
+  /* --- Automatic Mobile Layout Detection --- */
+  @media (max-width: 768px) {
+    .schedule-container { width: 100%; padding: 20px 15px; }
+    .timeline { display: none; }
+    .row { flex-direction: column; align-items: flex-start; margin-bottom: 24px; }
+    .day-label { width: 100%; text-align: left; padding-right: 0; margin-bottom: 8px; font-size: 18px; }
+    .blocks { flex-wrap: wrap; width: 100%; box-sizing: border-box; gap: 4px 2px; }
+    .block { width: calc((100% - 10px) / 6); height: 44px; font-size: 14px; }
+    .block.divider { margin-left: 0; }
+    .input-group { flex-direction: column; }
+  }
+
+  /* --- Manual Mobile Layout Override --- */
+  body.force-mobile .schedule-container { width: 100%; padding: 20px 15px; }
+  body.force-mobile .timeline { display: none; }
+  body.force-mobile .row { flex-direction: column; align-items: flex-start; margin-bottom: 24px; }
+  body.force-mobile .day-label { width: 100%; text-align: left; padding-right: 0; margin-bottom: 8px; font-size: 18px; }
+  body.force-mobile .blocks { flex-wrap: wrap; width: 100%; box-sizing: border-box; gap: 4px 2px; }
+  body.force-mobile .block { width: calc((100% - 10px) / 6); height: 44px; font-size: 14px; }
+  body.force-mobile .block.divider { margin-left: 0; }
+  body.force-mobile .input-group { flex-direction: column; }
 </style>
 </head>
 <body>
@@ -236,7 +231,10 @@
   </div>
 </div>
 
-<button class="save-button" onclick="downloadImage()">Save as Image</button>
+<div class="button-group">
+  <button class="save-button toggle-button" onclick="toggleMobile()">Toggle Mobile Layout</button>
+  <button class="save-button" onclick="downloadImage()">Save as Image</button>
+</div>
 
 <script>
   const acnhBackgrounds = [
@@ -347,6 +345,11 @@
       link.href = canvas.toDataURL("image/png");
       link.click();
     });
+  }
+
+  // --- NEW: Toggle Mobile Function ---
+  function toggleMobile() {
+    document.body.classList.toggle('force-mobile');
   }
 </script>
 
