@@ -133,13 +133,27 @@
     <div class="input-group">
       <select id="timezone">
         <option value="" disabled selected>Select Your Timezone...</option>
-        <option value="BST">British Summer Time (BST)</option>
-        <option value="GMT">Greenwich Mean Time (GMT)</option>
-        <option value="EST">Eastern Standard Time (EST)</option>
-        <option value="CST">Central Standard Time (CST)</option>
-        <option value="PST">Pacific Standard Time (PST)</option>
-        <option value="AEST">Australian Eastern Standard Time (AEST)</option>
-        <option value="JST">Japan Standard Time (JST)</option>
+        <option value="HST">Hawaii Standard Time (HST / UTC-10)</option>
+        <option value="AKST">Alaska Standard Time (AKST / UTC-9)</option>
+        <option value="PST">Pacific Standard Time (PST / UTC-8)</option>
+        <option value="MST">Mountain Standard Time (MST / UTC-7)</option>
+        <option value="CST">Central Standard Time (CST / UTC-6)</option>
+        <option value="EST">Eastern Standard Time (EST / UTC-5)</option>
+        <option value="AST">Atlantic Standard Time (AST / UTC-4)</option>
+        <option value="BRT">Brasília Time (BRT / UTC-3)</option>
+        <option value="GMT">Greenwich Mean Time (GMT / UTC+0)</option>
+        <option value="BST">British Summer Time (BST / UTC+1)</option>
+        <option value="CET">Central European Time (CET / UTC+1)</option>
+        <option value="EET">Eastern European Time (EET / UTC+2)</option>
+        <option value="SAST">South African Standard Time (SAST / UTC+2)</option>
+        <option value="MSK">Moscow Time (MSK / UTC+3)</option>
+        <option value="GST">Gulf Standard Time (GST / UTC+4)</option>
+        <option value="WIB">Western Indonesian Time (WIB / UTC+7)</option>
+        <option value="AWST">Australian Western Standard Time (AWST / UTC+8)</option>
+        <option value="JST">Japan Standard Time (JST / UTC+9)</option>
+        <option value="KST">Korea Standard Time (KST / UTC+9)</option>
+        <option value="AEST">Australian Eastern Standard Time (AEST / UTC+10)</option>
+        <option value="NZST">New Zealand Standard Time (NZST / UTC+12)</option>
       </select>
       <input type="text" id="discord" placeholder="Discord: @username" autocomplete="off" />
     </div>
@@ -155,210 +169,4 @@
 <script>
   const acnhBackgrounds = [
     "https://acnh-imgbed.pages.dev/file/1781962413931_zzMZmoz.png",
-    "https://acnh-imgbed.pages.dev/file/1781962415916_WWNzSd9.png",
-    "https://acnh-imgbed.pages.dev/file/1781962412519_unknown.png",
-    "https://acnh-imgbed.pages.dev/file/1781962412040_RnirUs6.png",
-    "https://acnh-imgbed.pages.dev/file/1781962407032_PJWUQMb.png",
-    "https://acnh-imgbed.pages.dev/file/1781962416194_lEk2Shz.png",
-    "https://acnh-imgbed.pages.dev/file/1781962414354_D3Bi7re.png",
-    "https://acnh-imgbed.pages.dev/file/1781962414747_cHapdJD.png",
-    "https://acnh-imgbed.pages.dev/file/1781962410247_BLnD22b.png",
-    "https://acnh-imgbed.pages.dev/file/1781962413961_5FYTaD1.png"
-  ];
-  
-  const captureDiv = document.getElementById('capture');
-  const randomImage = acnhBackgrounds[Math.floor(Math.random() * acnhBackgrounds.length)];
-  
-  captureDiv.style.backgroundImage = `linear-gradient(rgba(39, 45, 53, 0.8), rgba(39, 45, 53, 0.8)), url('${randomImage}')`;
-  captureDiv.style.backgroundSize = "cover";
-  captureDiv.style.backgroundPosition = "center";
-
-  let scheduleState = new Array(168).fill(false);
-  let domBlocks = new Array(168);
-  
-  let isDragging = false;
-  let toggleState = false;
-
-  document.addEventListener('mousedown', () => isDragging = true);
-  document.addEventListener('mouseup', () => isDragging = false);
-  
-  document.addEventListener('touchend', () => isDragging = false);
-  document.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
-    e.preventDefault(); 
-    const touch = e.touches[0];
-    const target = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (target && target.classList.contains('block')) {
-      const index = domBlocks.indexOf(target);
-      if (index !== -1 && scheduleState[index] !== toggleState) {
-        scheduleState[index] = toggleState;
-        updateBlockVisual(index);
-      }
-    }
-  }, { passive: false });
-
-  const tzOffsets = {
-    "BST": 1, "GMT": 0, "EST": -5, "CST": -6, "PST": -8, "AEST": 10, "JST": 9
-  };
-  let currentOffset = null;
-
-  for (let day = 0; day < 7; day++) {
-    const container = document.getElementById('day-' + day);
-    for (let hour = 0; hour < 24; hour++) {
-      const index = (day * 24) + hour;
-      const block = document.createElement('div');
-      block.className = 'block';
-      block.textContent = hour; 
-      
-      if (hour > 0 && hour % 6 === 0) {
-        block.classList.add('divider');
-      }
-      
-      block.addEventListener('mousedown', (e) => {
-        e.preventDefault(); 
-        toggleState = !scheduleState[index];
-        scheduleState[index] = toggleState;
-        updateBlockVisual(index);
-      });
-
-      block.addEventListener('mouseenter', () => {
-        if (isDragging) {
-          scheduleState[index] = toggleState;
-          updateBlockVisual(index);
-        }
-      });
-      
-      block.addEventListener('touchstart', (e) => {
-        e.preventDefault(); 
-        isDragging = true;
-        toggleState = !scheduleState[index];
-        scheduleState[index] = toggleState;
-        updateBlockVisual(index);
-      }, { passive: false });
-
-      domBlocks[index] = block;
-      container.appendChild(block);
-    }
-  }
-
-  function updateBlockVisual(index) {
-    domBlocks[index].classList.toggle('active', scheduleState[index]);
-  }
-
-  document.getElementById('timezone').addEventListener('change', (e) => {
-    const newOffset = tzOffsets[e.target.value];
-    
-    if (currentOffset !== null) {
-      const shiftAmount = newOffset - currentOffset;
-      let newScheduleState = new Array(168).fill(false);
-      
-      for (let i = 0; i < 168; i++) {
-        if (scheduleState[i]) {
-          let newIndex = (i + shiftAmount) % 168;
-          if (newIndex < 0) {
-            newIndex += 168;
-          }
-          newScheduleState[newIndex] = true;
-        }
-      }
-      
-      scheduleState = newScheduleState;
-      for (let i = 0; i < 168; i++) {
-        updateBlockVisual(i);
-      }
-    }
-    
-    currentOffset = newOffset; 
-  });
-
-  function downloadImage() {
-    const element = document.getElementById("capture");
-    const wasMobileForce = document.body.classList.contains('force-mobile');
-    
-    document.body.classList.remove('force-mobile');
-
-    html2canvas(element, {
-      useCORS: true, 
-      allowTaint: true,
-      backgroundColor: null, 
-      scale: 2,
-      windowWidth: 1024 
-    }).then(canvas => {
-      if (wasMobileForce) {
-        document.body.classList.add('force-mobile');
-      }
-      const link = document.createElement("a");
-      link.download = "availability-schedule.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    });
-  }
-
-  function toggleMobile() {
-    document.body.classList.toggle('force-mobile');
-  }
-
-  function compressSchedule() {
-    let hex = '';
-    for(let i=0; i<168; i+=4) {
-      let val = (scheduleState[i] ? 8 : 0) + (scheduleState[i+1] ? 4 : 0) + (scheduleState[i+2] ? 2 : 0) + (scheduleState[i+3] ? 1 : 0);
-      hex += val.toString(16);
-    }
-    return hex;
-  }
-
-  function decompressSchedule(hexStr) {
-    if (!hexStr || hexStr.length !== 42) return;
-    for(let i=0; i<hexStr.length; i++) {
-      let val = parseInt(hexStr[i], 16);
-      scheduleState[i*4] = !!(val & 8);
-      scheduleState[i*4+1] = !!(val & 4);
-      scheduleState[i*4+2] = !!(val & 2);
-      scheduleState[i*4+3] = !!(val & 1);
-    }
-    for (let i=0; i<168; i++) {
-      updateBlockVisual(i);
-    }
-  }
-
-  function generateShareLink() {
-    const username = document.getElementById('discord').value.trim();
-    const tz = document.getElementById('timezone').value;
-    const scheduleHex = compressSchedule();
-    
-    let url = new URL(window.location.href);
-    url.searchParams.set('s', scheduleHex);
-    if (username) url.searchParams.set('user', username);
-    if (tz) url.searchParams.set('tz', tz);
-    
-    const linkText = username ? `${username}'s Schedule` : `My Schedule`;
-    const markdownLink = `[${linkText}](${url.toString()})`;
-    
-    navigator.clipboard.writeText(markdownLink).then(() => {
-      const btn = document.getElementById('shareBtn');
-      btn.textContent = "Copied Markdown!";
-      setTimeout(() => btn.textContent = "Copy Share Link", 2000);
-    });
-  }
-
-  window.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
-    
-    if (params.has('s')) {
-      decompressSchedule(params.get('s'));
-    }
-    if (params.has('user')) {
-      document.getElementById('discord').value = params.get('user');
-    }
-    if (params.has('tz')) {
-      const tzVal = params.get('tz');
-      const tzSelect = document.getElementById('timezone');
-      tzSelect.value = tzVal;
-      currentOffset = tzOffsets[tzVal]; 
-    }
-  });
-
-</script>
-
-</body>
-</html>
+    "
