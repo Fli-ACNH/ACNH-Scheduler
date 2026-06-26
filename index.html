@@ -131,30 +131,69 @@
     <div class="row"><div class="day-label">Sunday</div><div class="blocks" id="day-6"></div></div>
 
     <div class="input-group">
-      <select id="timezone">
-        <option value="" disabled selected>Select Your Timezone...</option>
-        <option value="HST">Hawaii Standard Time (HST / UTC-10)</option>
-        <option value="AKST">Alaska Standard Time (AKST / UTC-9)</option>
-        <option value="PST">Pacific Standard Time (PST / UTC-8)</option>
-        <option value="MST">Mountain Standard Time (MST / UTC-7)</option>
-        <option value="CST">Central Standard Time (CST / UTC-6)</option>
-        <option value="EST">Eastern Standard Time (EST / UTC-5)</option>
-        <option value="AST">Atlantic Standard Time (AST / UTC-4)</option>
-        <option value="BRT">Brasília Time (BRT / UTC-3)</option>
-        <option value="GMT">Greenwich Mean Time (GMT / UTC+0)</option>
-        <option value="BST">British Summer Time (BST / UTC+1)</option>
-        <option value="CET">Central European Time (CET / UTC+1)</option>
-        <option value="EET">Eastern European Time (EET / UTC+2)</option>
-        <option value="SAST">South African Standard Time (SAST / UTC+2)</option>
-        <option value="MSK">Moscow Time (MSK / UTC+3)</option>
-        <option value="GST">Gulf Standard Time (GST / UTC+4)</option>
-        <option value="WIB">Western Indonesian Time (WIB / UTC+7)</option>
-        <option value="AWST">Australian Western Standard Time (AWST / UTC+8)</option>
-        <option value="JST">Japan Standard Time (JST / UTC+9)</option>
-        <option value="KST">Korea Standard Time (KST / UTC+9)</option>
-        <option value="AEST">Australian Eastern Standard Time (AEST / UTC+10)</option>
-        <option value="NZST">New Zealand Standard Time (NZST / UTC+12)</option>
-      </select>
+      <input type="text" id="timezone" list="tz-list" placeholder="Search Timezone... (e.g. CET)" autocomplete="off" />
+      <datalist id="tz-list">
+        <option value="BIT (UTC-12)">Baker Island Time</option>
+        <option value="SST (UTC-11)">Samoa Standard Time</option>
+        <option value="NUT (UTC-11)">Niue Time</option>
+        <option value="HST (UTC-10)">Hawaii Standard Time</option>
+        <option value="CKT (UTC-10)">Cook Island Time</option>
+        <option value="AKST (UTC-9)">Alaska Standard Time</option>
+        <option value="PST (UTC-8)">Pacific Standard Time</option>
+        <option value="PT (UTC-8)">Pacific Time</option>
+        <option value="AKDT (UTC-8)">Alaska Daylight Time</option>
+        <option value="MST (UTC-7)">Mountain Standard Time</option>
+        <option value="PDT (UTC-7)">Pacific Daylight Time</option>
+        <option value="CST (North America | UTC-6)">Central Standard Time</option>
+        <option value="MDT (UTC-6)">Mountain Daylight Time</option>
+        <option value="EST (UTC-5)">Eastern Standard Time</option>
+        <option value="CDT (UTC-5)">Central Daylight Time</option>
+        <option value="AST (Atlantic | UTC-4)">Atlantic Standard Time</option>
+        <option value="EDT (UTC-4)">Eastern Daylight Time</option>
+        <option value="ART (UTC-3)">Argentina Time</option>
+        <option value="BRT (UTC-3)">Brasília Time</option>
+        <option value="FNT (UTC-2)">Fernando de Noronha Time</option>
+        <option value="AZOT (UTC-1)">Azores Standard Time</option>
+        <option value="GMT (UTC+0)">Greenwich Mean Time</option>
+        <option value="UTC (UTC+0)">Coordinated Universal Time</option>
+        <option value="WET (UTC+0)">Western European Time</option>
+        <option value="BST (UTC+1)">British Summer Time</option>
+        <option value="CET (UTC+1)">Central European Time</option>
+        <option value="WAT (UTC+1)">West Africa Time</option>
+        <option value="WEST (UTC+1)">Western European Summer Time</option>
+        <option value="CEST (UTC+2)">Central European Summer Time</option>
+        <option value="EET (UTC+2)">Eastern European Time</option>
+        <option value="SAST (UTC+2)">South African Standard Time</option>
+        <option value="CAT (UTC+2)">Central Africa Time</option>
+        <option value="EEST (UTC+3)">Eastern European Summer Time</option>
+        <option value="MSK (UTC+3)">Moscow Time</option>
+        <option value="AST (Arabia | UTC+3)">Arabia Standard Time</option>
+        <option value="EAT (UTC+3)">East Africa Time</option>
+        <option value="GST (Gulf | UTC+4)">Gulf Standard Time</option>
+        <option value="GET (UTC+4)">Georgia Standard Time</option>
+        <option value="PKT (UTC+5)">Pakistan Standard Time</option>
+        <option value="YEKT (UTC+5)">Yekaterinburg Time</option>
+        <option value="ALMT (UTC+6)">Alma-Ata Time</option>
+        <option value="OMST (UTC+6)">Omsk Standard Time</option>
+        <option value="WIB (UTC+7)">Western Indonesian Time</option>
+        <option value="ICT (UTC+7)">Indochina Time</option>
+        <option value="AWST (UTC+8)">Australian Western Standard Time</option>
+        <option value="CST (China | UTC+8)">China Standard Time</option>
+        <option value="SGT (UTC+8)">Singapore Standard Time</option>
+        <option value="HKT (UTC+8)">Hong Kong Time</option>
+        <option value="WITA (UTC+8)">Central Indonesian Time</option>
+        <option value="JST (UTC+9)">Japan Standard Time</option>
+        <option value="KST (UTC+9)">Korea Standard Time</option>
+        <option value="WIT (UTC+9)">Eastern Indonesian Time</option>
+        <option value="AEST (UTC+10)">Australian Eastern Standard Time</option>
+        <option value="ChST (UTC+10)">Chamorro Standard Time</option>
+        <option value="AEDT (UTC+11)">Australian Eastern Daylight Time</option>
+        <option value="SBT (UTC+11)">Solomon Islands Time</option>
+        <option value="NZST (UTC+12)">New Zealand Standard Time</option>
+        <option value="FJT (UTC+12)">Fiji Time</option>
+        <option value="NZDT (UTC+13)">New Zealand Daylight Time</option>
+        <option value="TOT (UTC+13)">Tonga Time</option>
+      </datalist>
       <input type="text" id="discord" placeholder="Discord: @username" autocomplete="off" />
     </div>
   </div>
@@ -211,11 +250,36 @@
     }
   }, { passive: false });
 
+  // Expanded exhaustive map. Keys match the datalist options exactly.
   const tzOffsets = {
-    "HST": -10, "AKST": -9, "PST": -8, "MST": -7, "CST": -6, "EST": -5, "AST": -4, "BRT": -3,
-    "GMT": 0, "BST": 1, "CET": 1, "EET": 2, "SAST": 2, "MSK": 3, "GST": 4, 
-    "WIB": 7, "AWST": 8, "JST": 9, "KST": 9, "AEST": 10, "NZST": 12
+    "BIT (UTC-12)": -12,
+    "SST (UTC-11)": -11, "NUT (UTC-11)": -11,
+    "HST (UTC-10)": -10, "CKT (UTC-10)": -10,
+    "AKST (UTC-9)": -9,
+    "PST (UTC-8)": -8, "PT (UTC-8)": -8, "AKDT (UTC-8)": -8,
+    "MST (UTC-7)": -7, "PDT (UTC-7)": -7,
+    "CST (North America | UTC-6)": -6, "MDT (UTC-6)": -6,
+    "EST (UTC-5)": -5, "CDT (UTC-5)": -5,
+    "AST (Atlantic | UTC-4)": -4, "EDT (UTC-4)": -4,
+    "ART (UTC-3)": -3, "BRT (UTC-3)": -3,
+    "FNT (UTC-2)": -2,
+    "AZOT (UTC-1)": -1,
+    "GMT (UTC+0)": 0, "UTC (UTC+0)": 0, "WET (UTC+0)": 0,
+    "BST (UTC+1)": 1, "CET (UTC+1)": 1, "WAT (UTC+1)": 1, "WEST (UTC+1)": 1,
+    "CEST (UTC+2)": 2, "EET (UTC+2)": 2, "SAST (UTC+2)": 2, "CAT (UTC+2)": 2,
+    "EEST (UTC+3)": 3, "MSK (UTC+3)": 3, "AST (Arabia | UTC+3)": 3, "EAT (UTC+3)": 3,
+    "GST (Gulf | UTC+4)": 4, "GET (UTC+4)": 4,
+    "PKT (UTC+5)": 5, "YEKT (UTC+5)": 5,
+    "ALMT (UTC+6)": 6, "OMST (UTC+6)": 6,
+    "WIB (UTC+7)": 7, "ICT (UTC+7)": 7,
+    "AWST (UTC+8)": 8, "CST (China | UTC+8)": 8, "SGT (UTC+8)": 8, "HKT (UTC+8)": 8, "WITA (UTC+8)": 8,
+    "JST (UTC+9)": 9, "KST (UTC+9)": 9, "WIT (UTC+9)": 9,
+    "AEST (UTC+10)": 10, "ChST (UTC+10)": 10,
+    "AEDT (UTC+11)": 11, "SBT (UTC+11)": 11,
+    "NZST (UTC+12)": 12, "FJT (UTC+12)": 12,
+    "NZDT (UTC+13)": 13, "TOT (UTC+13)": 13
   };
+  
   let currentOffset = null;
 
   for (let day = 0; day < 7; day++) {
@@ -262,29 +326,32 @@
   }
 
   document.getElementById('timezone').addEventListener('change', (e) => {
+    // Only process the change if they typed/selected a valid timezone from our list
     const newOffset = tzOffsets[e.target.value];
     
-    if (currentOffset !== null) {
-      const shiftAmount = newOffset - currentOffset;
-      let newScheduleState = new Array(168).fill(false);
-      
-      for (let i = 0; i < 168; i++) {
-        if (scheduleState[i]) {
-          let newIndex = (i + shiftAmount) % 168;
-          if (newIndex < 0) {
-            newIndex += 168;
+    if (newOffset !== undefined) {
+      if (currentOffset !== null) {
+        const shiftAmount = newOffset - currentOffset;
+        let newScheduleState = new Array(168).fill(false);
+        
+        for (let i = 0; i < 168; i++) {
+          if (scheduleState[i]) {
+            let newIndex = (i + shiftAmount) % 168;
+            if (newIndex < 0) {
+              newIndex += 168;
+            }
+            newScheduleState[newIndex] = true;
           }
-          newScheduleState[newIndex] = true;
+        }
+        
+        scheduleState = newScheduleState;
+        for (let i = 0; i < 168; i++) {
+          updateBlockVisual(i);
         }
       }
       
-      scheduleState = newScheduleState;
-      for (let i = 0; i < 168; i++) {
-        updateBlockVisual(i);
-      }
+      currentOffset = newOffset; 
     }
-    
-    currentOffset = newOffset; 
   });
 
   function downloadImage() {
@@ -368,9 +435,11 @@
     }
     if (params.has('tz')) {
       const tzVal = params.get('tz');
-      const tzSelect = document.getElementById('timezone');
-      tzSelect.value = tzVal;
-      currentOffset = tzOffsets[tzVal]; 
+      const tzInput = document.getElementById('timezone');
+      tzInput.value = tzVal;
+      if (tzOffsets[tzVal] !== undefined) {
+        currentOffset = tzOffsets[tzVal]; 
+      }
     }
   });
 
